@@ -1,0 +1,41 @@
+{% extends "queuer/basee.html" %}
+{% block contents %}
+<section>
+    <ul class="mb-3">
+        <li>Total clients Still in line: {{unfinished.count}}</li>
+    </ul>
+    <ol>
+        {% for queue in unfinished %}
+          <li>Token #{{queue.queue}}, belongs to: {{queue.phone_number}}</li>
+        {% empty %}
+          <li>This queue is Complete</li>
+        {% endfor %}
+    </ol>
+
+    <div class="my-3">
+        <p>Done: </p>
+        <ul>
+        {% for queue in finished %}
+          <li>Token #{{queue.queue}}, belongs to: {{queue.phone_number}}</li>
+        {% empty %}
+            <li>None Of This Queue Has Advanced</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <form class="login100-form validate-form" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Advance in queue</button>
+        </div>
+    </form>
+
+    <form method="POST" action="{% url 'reset_q' qr.uuid %}">
+        {% csrf_token %}
+        <div class="form-group">
+        <button class="btn btn-danger" type="submit">Reset Queue</button>
+        </div>
+    </form>
+
+</section>        
+{% endblock contents %}
