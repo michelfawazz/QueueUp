@@ -84,21 +84,26 @@ def nextone(request, uuid):
 
     
     if request.method == 'POST':
-        queue_that_advances = unfinished.first()
-        queue_that_advances.used = True
-        queue_that_advances.save()
-        # to send an email
-        template = render_to_string('queueApp/email_template.html', {'name':queue_that_advances.client_name})
-        notiemail = EmailMessage(
-            'Its Your Turn Now!',
-            template,
-            settings.EMAIL_HOST_USER,
-            [queue_that_advances.client_email]
-        )
-        notiemail.fail_silently=False
-        notiemail.send()
+        if unfinished.exists():
 
-        return redirect('nextone', uuid)
+            queue_that_advances = unfinished.first()
+            queue_that_advances.used = True
+            queue_that_advances.save()
+            # to send an email
+            template = render_to_string('queueApp/email_template.html', {'name':queue_that_advances.client_name})
+            notiemail = EmailMessage(
+                'Its Your Turn Now!',
+                template,
+                settings.EMAIL_HOST_USER,
+                [queue_that_advances.client_email]
+            )
+            notiemail.fail_silently=False
+            notiemail.send()
+
+            return redirect('nextone', uuid)
+        else:
+            messages.success(request, f'The Queue is Empty!')
+
 
     context = {'queue_instances': queue_instances, 'qr': qr_instance, 'unfinished': unfinished, 'finished': finished}
     return render(request, 'queueApp/view_queue.html', context)
