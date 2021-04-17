@@ -10,7 +10,4 @@ urlpatterns = [
     path('delete_qr/<str:uuid>', views.delete_qr, name='del_qr'),
     path('reset_queue/<str:uuid>/', views.reset_queue, name='reset_q'),
     path('nextone/<str:uuid>/update_priority/<str:pk>', views.update_priority, name='update_priority'),
-
-    
-   
 ]

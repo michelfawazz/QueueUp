@@ -114,8 +114,8 @@ def nextone(request, uuid):
 
 
 def update_priority(request,uuid, pk):
-    
-    queue_that_changes = Queue.objects.get(queue=pk)
+    qr_instance = QRCode.objects.get(uuid=uuid)
+    queue_that_changes = qr_instance.queue_set.get(queue=pk)
     if request.method == 'POST' and 'priority' in request.POST:
         queue_that_changes.priority = request.POST['prio']
         queue_that_changes.save()
