@@ -5,25 +5,26 @@ from django.conf import settings
 from django.template.loader import render_to_string
 import sys
 from django.contrib import messages
-from .forms import queueForm
+from .forms import queueForm 
 from django.contrib.auth.decorators import login_required
 from .models import QRCode, Queue
 
 
-
+#token view to generate a token for clients who scan a qr code each token is linked to a specific qr code instance
 def token(request, pk):
     queue_token = Queue.objects.get(pk=pk)
     phone = queue_token.phone_number
     email = queue_token.client_email
+    priority = queue_token.priority
 
     x = queue_token.queue
     y = x - 1
 
-    context = {'token': x,'phone':phone,'after':y,'email':email,}
+    context = {'token': x,'phone':phone,'after':y,'email':email,'priority':priority}
 
     return render(request,'queueApp/token.html',context)
 
-
+# client view this is for the form that the client will have to fill out after he scans the qr code
 def client(request, pk):
     form = queueForm()
     qr_instance = QRCode.objects.get(uuid=pk)
@@ -59,7 +60,7 @@ def client(request, pk):
     context = {'form': form}
     return render(request, 'queueApp/client.html', context)
 
-
+#staff view this is where our users on site can create and manage their queues
 @login_required
 def staff(request):
     qr_codes = QRCode.objects.filter(created_by=request.user.profile)
@@ -79,11 +80,13 @@ def staff(request):
 def nextone(request, uuid):
     qr_instance = QRCode.objects.get(uuid=uuid)
     queue_instances = qr_instance.queue_set.all().order_by('queue')
-    unfinished = queue_instances.filter(used=False)
-    finished = queue_instances.filter(used=True)
+    unfinished = queue_instances.filter(used=False).order_by('-priority', 'issue_dt')
+    unfinishedcount = queue_instances.filter(used=False).count()
+    finished = queue_instances.filter(used=True).order_by('-priority', 'issue_dt')
+    
 
     
-    if request.method == 'POST':
+    if request.method == 'POST' and 'advance' in request.POST:
         if unfinished.exists():
 
             queue_that_advances = unfinished.first()
@@ -104,10 +107,24 @@ def nextone(request, uuid):
         else:
             messages.success(request, f'The Queue is Empty!')
 
+    
 
     context = {'queue_instances': queue_instances, 'qr': qr_instance, 'unfinished': unfinished, 'finished': finished}
     return render(request, 'queueApp/view_queue.html', context)
 
+
+def update_priority(request,uuid, pk):
+    
+    queue_that_changes = Queue.objects.get(queue=pk)
+    if request.method == 'POST' and 'priority' in request.POST:
+        queue_that_changes.priority = request.POST['prio']
+        queue_that_changes.save()
+        messages.success(request, f'priority changed!')
+        return redirect('nextone', uuid)
+
+    context = {'queue_that_changes':queue_that_changes }
+        
+    return render(request, 'queueApp/staff.html', context)
 
 
 def delete_qr(request, uuid):
@@ -126,7 +143,7 @@ def reset_queue(request, uuid):
     unfinished = queue_instances.filter(used=False)
     finished = queue_instances.filter(used=True)
     
-    if request.method == 'POST':
+    if request.method == 'POST' and 'reset' in request.POST:
         queue_instances.delete()
         messages.success(request, f'The Queue And QR Code Has Been Reset!')
 

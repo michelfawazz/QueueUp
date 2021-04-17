@@ -36,6 +36,7 @@ class Queue(models.Model):
     client_name = models.CharField(max_length=20, null=True)
     phone_number = models.CharField(max_length=20, null=True)
     client_email = models.EmailField(null=True)
+    priority = models.IntegerField(default=1, null=True)
     queue = models.IntegerField(null=True)
     issue_dt = models.DateTimeField(null=True, auto_now_add=True)
     used = models.BooleanField(null=True, default=False)

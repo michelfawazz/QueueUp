@@ -1,41 +1,71 @@
 {% extends "queuer/basee.html" %}
 {% block contents %}
 <section>
-    <ul class="mb-3">
-        <li>Total clients Still in line: {{unfinished.count}}</li>
-    </ul>
-    <ol>
-        {% for queue in unfinished %}
-          <li>Token #{{queue.queue}}, belongs to: {{queue.phone_number}}</li>
-        {% empty %}
-          <li>This queue is Complete</li>
-        {% endfor %}
-    </ol>
+    <div class="mb-3">
+        <h1>Current queue:</h1>
+        
+            {% csrf_token %}
+            <p>Total clients Still in line: {{unfinished.count}}</p>
+            <table class = "table">
+                <tr>
+                    <th>Token number</th>
+                    <th>Belongs to</th>
+                    <th>Priority</th>
+                    <th></th>
+                </tr>
+                {% for queue in unfinished %}
+                <tr>
+                    <td>{{queue.queue}}</td>
+                    <td>{{queue.phone_number}}</td>
+                    <form class="login100-form validate-form" method="POST" action = "{% url 'update_priority' qr.uuid queue.queue %}" >
+                        {% csrf_token %}
+                        <td><input type="number" value="{{ queue.priority }}" name="prio"></td>
+                        <td><button class="btn btn-outline-info" type="submit" name="priority">Save</button></td>
+                    </form>
+                </tr>
+                {% empty %}
+                    <li>This queue is Complete</li>
+                {% endfor %}
+
+            </table>
+        
+    </div>
 
     <div class="my-3">
-        <p>Done: </p>
-        <ul>
-        {% for queue in finished %}
-          <li>Token #{{queue.queue}}, belongs to: {{queue.phone_number}}</li>
-        {% empty %}
-            <li>None Of This Queue Has Advanced</li>
-        {% endfor %}
-        </ul>
+        <h1>Finished queue:</h1>
+        
+        <table class = "table">
+            <tr>
+                <th>Token number</th>
+                <th>Belongs to</th>
+                <th>Priority</th>
+            </tr>
+            {% for queue in finished %}
+            <tr>
+                <td>{{queue.queue}}</td>
+                <td>{{queue.phone_number}}</td>
+                <td>{{queue.priority}}</td>
+            </tr>
+            {% empty %}
+                <li>This queue is Complete</li>
+            {% endfor %}
+        </table>
     </div>
-    
-    <form class="login100-form validate-form" method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Advance in queue</button>
-        </div>
-    </form>
-
-    <form method="POST" action="{% url 'reset_q' qr.uuid %}">
-        {% csrf_token %}
-        <div class="form-group">
-        <button class="btn btn-danger" type="submit">Reset Queue</button>
-        </div>
-    </form>
-
+    <div>
+        <form class="login100-form validate-form" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit" name="advance">Advance in queue</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <form method="POST" action="{% url 'reset_q' qr.uuid %}">
+            {% csrf_token %}
+            <div class="form-group">
+            <button class="btn btn-danger" type="submit" name="reset">Reset Queue</button>
+            </div>
+        </form>
+    </div>
 </section>        
 {% endblock contents %}
