@@ -4,8 +4,8 @@
     <div class="row">
       <legend class="border-bottom mb-4">Manage And Create New Queues!</legend>
       {% for qr in qr_codes %}
-      <div class="card col-3 mx-2">
-        <img src="{{qr.qr_code.url}}">
+      <div class="card col-5 mx-2">
+        <img src="{{qr.qr_code.url}}" class="img-fluid">
         <div class="card-body">
           <h5 class="card-title">{{qr.name}}</h5>
           <a href="{% url 'nextone' qr.uuid %}" class="btn btn-primary">View Queue</a>

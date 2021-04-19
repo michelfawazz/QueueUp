@@ -1,13 +1,16 @@
 {% extends "queuer/basee.html" %}
 {% block contents %}
 <section>
-
-    <ul>
+  <div class="row">
+    <legend class="border-bottom mb-4">Here is your token!!</legend>
+     <ul>
         <li>your token number is:  {{token}}</li>
         <li>Your phone Number is : {{phone}}</li>
         <li>Your Email is : {{email}}</li>
         <li>You will soon be contacted by email when your turn is Up!</li>
       
       </ul>
+  </div>
+
 </section>        
 {% endblock contents %}
