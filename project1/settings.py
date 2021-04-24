@@ -157,5 +157,6 @@ EMAIL_HOST_USER = 'cmps253proj03@gmail.com'
 EMAIL_HOST_PASSWORD = 'proj03cmps'
 
 
+django_heroku.settings(locals())
 
 
