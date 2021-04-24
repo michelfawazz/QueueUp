@@ -1,0 +1,29 @@
+{% extends "queuer/basee.html" %}
+{% block contents %}
+<section>
+    <div class="row">
+      <legend class="border-bottom mb-4">Manage And Create New Queues!</legend>
+      {% for qr in qr_codes %}
+      <div class="card col-5 mx-2">
+        <img src="{{qr.qr_code.url}}" class="img-fluid">
+        <div class="card-body">
+          <h5 class="card-title">{{qr.name}}</h5>
+          <a href="{% url 'nextone' qr.uuid %}" class="btn btn-primary">View Queue</a>
+          <form method="POST" action="{% url 'del_qr' qr.uuid %}">
+              {% csrf_token %}
+              <button class="btn btn-danger" type="submit">Delete QR</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <form class="login100-form validate-form my-5" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="QR Name"/>
+            <button class="btn btn-outline-info" type="submit">Generate QR Code</button>
+        </div>
+    </form>
+</section>        
+{% endblock contents %}

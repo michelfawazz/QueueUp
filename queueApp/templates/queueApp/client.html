@@ -1,0 +1,21 @@
+{% extends "queuer/basee.html" %}
+{% load crispy_forms_tags %}
+{% block contents %}
+<section>
+    <form class="login100-form validate-form" method="POST">
+        {% csrf_token %}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Welcome, enter your phone number to get your e-Ticket</legend>
+        {{ form|crispy }}
+    </fieldset>
+
+    <div class="form-group">
+        <button class="btn btn-outline-info" type="submit">Get Ticket Number</button>
+    </div>
+
+    
+</form>
+
+</section>        
+{% endblock contents %}
+
