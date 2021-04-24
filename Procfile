@@ -1,1 +1,3 @@
-web: gunicorn ONLINEQUEUE-SYSTEM/project1.wsgi
+web: gunicorn project1.wsgi:application --log-file - --log-level debug
+python manage.py collectstatic --noinput
+manage.py migrate
