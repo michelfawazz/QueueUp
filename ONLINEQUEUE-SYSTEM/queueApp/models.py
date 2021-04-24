@@ -19,7 +19,7 @@ class QRCode(models.Model):
     def save(self, *args, **kwargs):
         new_id = uuid4()
         # make sure to change this url when website goes live
-        qrcode_img = qrcode.make(f'http:///127.0.0.1:8000/client/{new_id}')
+        qrcode_img = qrcode.make(f'http:///172.20.10.7:8000/client/{new_id}')
         self.uuid = new_id
         canvas = Image.new('RGB', (500, 500), 'white')
         draw = ImageDraw.Draw(canvas)
