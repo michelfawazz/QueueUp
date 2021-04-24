@@ -1,1 +1,1 @@
-web: gunicorn ONLINEQUEUE-SYSTEM.wsgi
+web: gunicorn ONLINEQUEUE-SYSTEM/project1.wsgi
